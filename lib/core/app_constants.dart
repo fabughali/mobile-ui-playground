@@ -166,6 +166,23 @@ class AppConstants {
   static const String helpTitle = 'Available Commands:';
   static const String helpSubtitle = 'Click on any command to use it. This playground supports 50+ natural language commands for avatar shapes, animation controls, color customization, spacing, and text field management!';
   
+  // Command Combination Hints
+  static const String commandCombinationTitle = '💡 Command Combination Tips:';
+  static const String commandCombinationHint = 'You can combine multiple commands using these operators:';
+  static const List<String> commandCombinationExamples = [
+    '&& (AND) - Commands run sequentially, stops on failure',
+    '; (Semicolon) - Commands run sequentially, continues always',
+    '& (Background) - Commands run in background',
+    '| (Pipe) - Pipes output between commands',
+    '|| (OR) - Commands run only if previous fails',
+  ];
+  static const List<String> commandCombinationUsage = [
+    'background blue && button red',
+    'avatar circle ; spacing tight',
+    'animation fast & reset',
+    'show name field || hide name field',
+  ];
+  
   // Error Messages
   static const String errorUnknownCommand = 'Unknown command';
   static const String errorSaveFailed = 'Failed to save layout';

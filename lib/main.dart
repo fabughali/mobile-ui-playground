@@ -576,6 +576,44 @@ class _CommandsList extends StatelessWidget {
               '• All changes are applied in real-time with smooth animations',
               style: TextStyle(fontSize: 14),
             ),
+            SizedBox(height: 8),
+            
+        Text('🔗 Command Combinations:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              '• "&&" - Commands run sequentially, stops on failure',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• ";" - Commands run sequentially, continues always',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• "&" - Commands run in background',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• "||" - Commands run only if previous fails',
+              style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(height: 8),
+            
+        Text('📋 Combination Examples:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              '• "background blue && button red" - Change both colors',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• "avatar circle ; spacing tight" - Change avatar and spacing',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• "animation fast & reset" - Set animation and reset',
+              style: TextStyle(fontSize: 14),
+            ),
+            Text(
+              '• "show name field || hide name field" - Conditional display',
+              style: TextStyle(fontSize: 14),
+            ),
           ],
         );
   }

@@ -56,7 +56,7 @@ class _CommandInputState extends ConsumerState<CommandInput> {
                   controller: _controller,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Try: "make background blue" or "hide avatar"',
+                    hintText: 'Try: "background blue" or "avatar circle && spacing tight"',
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: AppTheme.spacingM,
                       vertical: AppTheme.spacingM,
@@ -179,6 +179,82 @@ class _CommandInputState extends ConsumerState<CommandInput> {
                 children: AppConstants.commandExamples.map((command) => 
                   _buildHelpChip(command, theme),
                 ).toList(),
+              ),
+              const SizedBox(height: AppTheme.spacingM),
+              
+              // Command Combination Hints
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingM),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer.withAlpha(30),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                  border: Border.all(
+                    color: theme.colorScheme.secondaryContainer.withAlpha(50),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.link,
+                          size: 16,
+                          color: theme.colorScheme.secondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppConstants.commandCombinationTitle,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingXS),
+                    Text(
+                      AppConstants.commandCombinationHint,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingXS),
+                    ...AppConstants.commandCombinationExamples.map((example) => 
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '• $example',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingXS),
+                    Text(
+                      'Examples:',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingXS),
+                    ...AppConstants.commandCombinationUsage.map((usage) => 
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '• "$usage"',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
