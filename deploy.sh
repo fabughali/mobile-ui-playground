@@ -36,7 +36,7 @@ git commit -m "Deploy Flutter web app - $(date)"
 # Add remote origin
 git remote add origin https://github.com/fabughali/mobile-ui-playground.git
 
-# Force push to gh-pages branch (this will overwrite everything)
+# Force push to gh-pages branch (this will completely replace the branch)
 echo "🚀 Deploying to gh-pages branch..."
 git push origin HEAD:gh-pages --force
 
