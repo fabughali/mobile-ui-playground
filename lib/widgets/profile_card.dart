@@ -92,12 +92,20 @@ class ProfileCard extends ConsumerWidget {
           decoration: BoxDecoration(
             color: uiState.buttonColorTransparent ? Colors.transparent : uiState.buttonColor,
             borderRadius: BorderRadius.circular(uiState.avatarRoundedRadius),
+            image: uiState.hasCustomImage && uiState.avatarImagePath != null
+                ? DecorationImage(
+                    image: _buildBackgroundImage(uiState.avatarImagePath!),
+                    fit: BoxFit.cover,
+                  )
+                : null,
           ),
-          child: Icon(
-            Icons.person,
-            size: uiState.avatarDiameter * 0.6,
-            color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
-          ),
+          child: uiState.hasCustomImage && uiState.avatarImagePath != null
+              ? null
+              : Icon(
+                  Icons.person,
+                  size: uiState.avatarDiameter * 0.6,
+                  color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
+                ),
         );
       
       case 'square':
@@ -107,12 +115,20 @@ class ProfileCard extends ConsumerWidget {
           decoration: BoxDecoration(
             color: uiState.buttonColorTransparent ? Colors.transparent : uiState.buttonColor,
             borderRadius: BorderRadius.circular(4),
+            image: uiState.hasCustomImage && uiState.avatarImagePath != null
+                ? DecorationImage(
+                    image: _buildBackgroundImage(uiState.avatarImagePath!),
+                    fit: BoxFit.cover,
+                  )
+                : null,
           ),
-          child: Icon(
-            Icons.person,
-            size: min(uiState.avatarWidth, uiState.avatarHeight) * 0.6,
-            color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
-          ),
+          child: uiState.hasCustomImage && uiState.avatarImagePath != null
+              ? null
+              : Icon(
+                  Icons.person,
+                  size: min(uiState.avatarWidth, uiState.avatarHeight) * 0.6,
+                  color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
+                ),
         );
       
       case 'hexagon':
@@ -125,27 +141,42 @@ class ProfileCard extends ConsumerWidget {
           child: Container(
             width: uiState.avatarDiameter,
             height: uiState.avatarDiameter,
-            color: uiState.buttonColorTransparent ? Colors.transparent : uiState.buttonColor,
-            child: Icon(
-              Icons.person,
-              size: uiState.avatarDiameter * 0.6,
-              color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
+            decoration: BoxDecoration(
+              color: uiState.buttonColorTransparent ? Colors.transparent : uiState.buttonColor,
+              image: uiState.hasCustomImage && uiState.avatarImagePath != null
+                  ? DecorationImage(
+                      image: _buildBackgroundImage(uiState.avatarImagePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
+            child: uiState.hasCustomImage && uiState.avatarImagePath != null
+                ? null
+                : Icon(
+                    Icons.person,
+                    size: uiState.avatarDiameter * 0.6,
+                    color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
+                  ),
           ),
         );
       
       default:
         return CircleAvatar(
           radius: uiState.avatarDiameter / 2,
-          backgroundColor: theme.colorScheme.primary,
-          child: Icon(
-            Icons.person,
-            size: uiState.avatarDiameter * 0.6,
-            color: theme.colorScheme.onPrimary,
-            ),
-          );
-        }
-      }
+          backgroundColor: uiState.buttonColorTransparent ? Colors.transparent : uiState.buttonColor,
+          backgroundImage: uiState.hasCustomImage && uiState.avatarImagePath != null
+              ? _buildBackgroundImage(uiState.avatarImagePath!)
+              : null,
+          child: uiState.hasCustomImage && uiState.avatarImagePath != null
+              ? null
+              : Icon(
+                  Icons.person,
+                  size: uiState.avatarDiameter * 0.6,
+                  color: uiState.fontColorTransparent ? Colors.transparent : uiState.fontColor,
+                ),
+        );
+    }
+  }
 
   Widget _buildProfileInfo(BuildContext context, UIStateData uiState, ThemeData theme) {
     return Column(
@@ -298,6 +329,10 @@ class ProfileCard extends ConsumerWidget {
   }
 
   void _updateAvatarImage(UIState uiStateNotifier, String imagePath) {
+    print('🖼️ Updating avatar image...');
+    print('📁 Image path: ${imagePath.substring(0, 50)}...'); // Show first 50 chars
+    print('🔧 Has custom image before: ${uiStateNotifier.state.hasCustomImage}');
+    print('🖼️ Avatar image path before: ${uiStateNotifier.state.avatarImagePath}');
     
     // Create a single instruction that updates both properties at once
     uiStateNotifier.applyInstruction(
@@ -308,6 +343,9 @@ class ProfileCard extends ConsumerWidget {
       ),
     );
     
+    print('✅ Avatar image update instruction applied');
+    print('🔧 Has custom image after: ${uiStateNotifier.state.hasCustomImage}');
+    print('🖼️ Avatar image path after: ${uiStateNotifier.state.avatarImagePath}');
   }
 
   void _deleteAvatarImage(BuildContext context) {
@@ -322,28 +360,30 @@ class ProfileCard extends ConsumerWidget {
   }
 
   ImageProvider _buildBackgroundImage(String imagePath) {
-    
     if (imagePath.startsWith('data:')) {
       // Handle data URL - extract base64 data
-      final dataUri = Uri.parse(imagePath);
-      
-      final data = dataUri.data;
-      if (data != null) {
-        final bytes = data.contentAsBytes();
-        return MemoryImage(bytes);
-      }
-      
-      // Fallback: try to parse manually if Uri.parse fails
       try {
-        final base64Data = imagePath.split(',')[1];
+        final dataUri = Uri.parse(imagePath);
         
-        final bytes = base64Decode(base64Data);
+        if (dataUri.data != null) {
+          final bytes = dataUri.data!.contentAsBytes();
+          return MemoryImage(bytes);
+        }
         
-        return MemoryImage(bytes);
+        // Fallback: try to parse manually if Uri.parse fails
+        final parts = imagePath.split(',');
+        if (parts.length == 2) {
+          final base64Data = parts[1];
+          final bytes = base64Decode(base64Data);
+          return MemoryImage(bytes);
+        }
       } catch (e) {
-        // Return a placeholder or default image
-        return const AssetImage('assets/placeholder.png');
+        print('Error parsing data URL: $e');
+        print('Image path: $imagePath');
       }
+      
+      // Return a placeholder if parsing fails
+      return const AssetImage('assets/placeholder.png');
     }
     
     // Fallback to asset image for backward compatibility
