@@ -3,6 +3,11 @@
 **Version 3.0.0 - Enhanced Command System**  
 **Live Demo:** [https://fabughali.github.io/mobile-ui-playground/](https://fabughali.github.io/mobile-ui-playground/)
 
+[![Deploy to GitHub Pages](https://github.com/fabughali/mobile-ui-playground/workflows/Deploy%20Flutter%20Web%20to%20GitHub%20Pages/badge.svg)](https://github.com/fabughali/mobile-ui-playground/actions)
+[![Flutter Version](https://img.shields.io/badge/Flutter-3.24.0+-blue.svg)](https://flutter.dev/)
+[![Dart Version](https://img.shields.io/badge/Dart-3.0+-blue.svg)](https://dart.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 A sophisticated Flutter web application that demonstrates advanced natural language command processing with real-time UI updates, smart command filtering, and professional-grade user interface components.
 
 ## ✨ **Key Features**
