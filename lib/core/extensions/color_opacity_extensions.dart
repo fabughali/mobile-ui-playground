@@ -5,13 +5,13 @@ extension ColorOpacityExtensions on Color {
   /// Use this instead of deprecated withOpacity()
   Color withAlpha(double alpha) {
     assert(alpha >= 0.0 && alpha <= 1.0);
-    return Color.fromARGB((alpha * 255).round(), r.toInt(), g.toInt(), b.toInt());
+    return Color.fromARGB((alpha * 255).round(), red, green, blue);
   }
 
   /// Returns a color with the given alpha value (0-255)
   Color withAlphaValue(int alpha) {
     assert(alpha >= 0 && alpha <= 255);
-    return Color.fromARGB(alpha, r.toInt(), g.toInt(), b.toInt());
+    return Color.fromARGB(alpha, red, green, blue);
   }
 
   /// Returns a color with 10% opacity
