@@ -20,6 +20,10 @@ class _CommandInputState extends ConsumerState<CommandInput> {
   bool _isProcessing = false;
   String _lastCommand = '';
   bool _showHelp = false;
+  
+  // New state for multiple command selection
+  final Set<String> _selectedCommands = {};
+  String _separatorType = '&&'; // Default separator
 
   @override
   void dispose() {
@@ -56,7 +60,8 @@ class _CommandInputState extends ConsumerState<CommandInput> {
                   controller: _controller,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Try: "background blue" or "avatar circle && spacing tight"',
+                    hintText: 'Type commands or select multiple from below',
+                    helperText: '💡 Tip: Click multiple commands below to combine them automatically',
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: AppTheme.spacingM,
                       vertical: AppTheme.spacingM,
@@ -173,6 +178,187 @@ class _CommandInputState extends ConsumerState<CommandInput> {
                 ),
               ),
               const SizedBox(height: AppTheme.spacingS),
+              
+              // Separator Selector
+              Row(
+                children: [
+                  Text(
+                    'Separator: ',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ...['&&', ';', '&', '||'].map((separator) => 
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: FilterChip(
+                        label: Text(separator),
+                        selected: _separatorType == separator,
+                        onSelected: (selected) {
+                          setState(() {
+                            _separatorType = separator;
+                          });
+                          _updateCommandField();
+                        },
+                        backgroundColor: theme.colorScheme.surfaceVariant,
+                        selectedColor: theme.colorScheme.primaryContainer,
+                        labelStyle: TextStyle(
+                          color: _separatorType == separator 
+                              ? theme.colorScheme.onPrimaryContainer
+                              : theme.colorScheme.onSurfaceVariant,
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Selected Commands Display
+              if (_selectedCommands.isNotEmpty) ...[
+                const SizedBox(height: AppTheme.spacingS),
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingS),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer.withAlpha(30),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                    border: Border.all(
+                      color: theme.colorScheme.primaryContainer.withAlpha(50),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.playlist_add_check,
+                            size: 16,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Selected Commands (${_selectedCommands.length}):',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedCommands.clear();
+                              });
+                              _updateCommandField();
+                            },
+                            child: Text(
+                              'Clear All',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.error,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppTheme.spacingXS),
+                      Wrap(
+                        spacing: AppTheme.spacingXS,
+                        runSpacing: AppTheme.spacingXS,
+                        children: _selectedCommands.map((command) => 
+                          Chip(
+                            label: Text(command),
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              setState(() {
+                                _selectedCommands.remove(command);
+                              });
+                              _updateCommandField();
+                            },
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                            labelStyle: TextStyle(
+                              color: theme.colorScheme.onPrimaryContainer,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ).toList(),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXS),
+                      Container(
+                        padding: const EdgeInsets.all(AppTheme.spacingS),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                          border: Border.all(
+                            color: theme.colorScheme.outline.withAlpha(50),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.code,
+                              size: 16,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _buildCombinedCommand(),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontFamily: 'monospace',
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy, size: 16),
+                              onPressed: () {
+                                _controller.text = _buildCombinedCommand();
+                                _focusNode.requestFocus();
+                              },
+                              tooltip: 'Copy to input field',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              
+              // Instruction for multiple command selection
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingS),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.tertiaryContainer.withAlpha(30),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                  border: Border.all(
+                    color: theme.colorScheme.tertiaryContainer.withAlpha(50),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.touch_app,
+                      size: 16,
+                      color: theme.colorScheme.tertiary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Click commands below to select them. Selected commands will be automatically combined with your chosen separator.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
               Wrap(
                 spacing: AppTheme.spacingS,
                 runSpacing: AppTheme.spacingXS,
@@ -264,15 +450,46 @@ class _CommandInputState extends ConsumerState<CommandInput> {
   }
 
   Widget _buildHelpChip(String command, ThemeData theme) {
+    final isSelected = _selectedCommands.contains(command);
     return ActionChip(
       label: Text(command),
       onPressed: () {
-        _controller.text = command;
-        _focusNode.requestFocus();
+        setState(() {
+          if (isSelected) {
+            _selectedCommands.remove(command);
+          } else {
+            _selectedCommands.add(command);
+          }
+        });
+        _updateCommandField();
       },
-      backgroundColor: theme.colorScheme.primaryContainer,
-      labelStyle: TextStyle(color: theme.colorScheme.onPrimaryContainer),
+      backgroundColor: isSelected 
+          ? theme.colorScheme.primary 
+          : theme.colorScheme.primaryContainer,
+      labelStyle: TextStyle(
+        color: isSelected 
+            ? theme.colorScheme.onPrimary 
+            : theme.colorScheme.onPrimaryContainer,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      avatar: isSelected 
+          ? Icon(
+              Icons.check,
+              size: 16,
+              color: theme.colorScheme.onPrimary,
+            )
+          : null,
     );
+  }
+
+  String _buildCombinedCommand() {
+    if (_selectedCommands.isEmpty) return '';
+    return _selectedCommands.join(' $_separatorType ');
+  }
+
+  void _updateCommandField() {
+    _controller.text = _buildCombinedCommand();
+    _focusNode.requestFocus();
   }
 
   Future<void> _processCommand(UIStateData uiState) async {
