@@ -1,0 +1,183 @@
+---
+alwaysApply: true
+---
+Cursor Rules:
+
+---
+description: Guidelines for creating and maintaining Cursor rules to ensure consistency and effectiveness.
+globs: .cursor/rules/*.mdc
+alwaysApply: true
+---
+
+- **Required Rule Structure:**
+  ```markdown
+  ---
+  description: Clear, one-line description of what the rule enforces
+  globs: path/to/files/*.ext, other/path/**/*
+  alwaysApply: boolean
+  ---
+
+  - **Main Points in Bold**
+    - Sub-points with details
+    - Examples and explanations
+  ```
+
+- **File References:**
+  - Use `[filename](mdc:path/to/file)` ([filename](mdc:filename)) to reference files
+  - Example: [prisma.mdc](mdc:.cursor/rules/prisma.mdc) for rule references
+  - Example: [schema.prisma](mdc:prisma/schema.prisma) for code references
+
+- **Code Examples:**
+  - Use language-specific code blocks
+  ```typescript
+  // ✅ DO: Show good examples
+  const goodExample = true;
+  
+  // ❌ DON'T: Show anti-patterns
+  const badExample = false;
+  ```
+
+- **Rule Content Guidelines:**
+  - Start with high-level overview
+  - Include specific, actionable requirements
+  - Show examples of correct implementation
+  - Reference existing code when possible
+  - Keep rules DRY by referencing other rules
+
+- **Rule Maintenance:**
+  - Update rules when new patterns emerge
+  - Add examples from actual codebase
+  - Remove outdated patterns
+  - Cross-reference related rules
+
+- **Best Practices:**
+  - Use bullet points for clarity
+  - Keep descriptions concise
+  - Include both DO and DON'T examples
+  - Reference actual code over theoretical examples
+  - Use consistent formatting across rules 
+
+---
+
+Project Rules:
+
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## ✅ State Management & Architecture
+
+- Use **Freezed** for state classes and sealed unions
+- Use `@riverpod`-annotated **AsyncNotifierProvider** or **NotifierProvider**
+- Avoid `StateProvider`, `StateNotifierProvider`, and `ChangeNotifierProvider`
+- Use `AsyncValue` for loading, error, and empty states
+- Call `ref.invalidate()` for refreshing providers
+- Cancel async tasks on widget `dispose()`
+
+## 🎨 UI Structure & Reusability
+
+- Use `const` constructors for immutable widgets
+- Prefer `ConsumerWidget` or `HookConsumerWidget` for UI with state
+- Use `ListView.builder` for large or scrollable lists
+- Use `SelectableText.rich` in red for errors instead of `SnackBar`
+- Wrap all lists with `RefreshIndicator`
+- Centralize theme, constants, and colors in `/core/theme/`
+- use both light theme and dark theme.
+- Never hardcode colors or styles — use `Theme.of(context)` and theme config
+- Don’t use `.withOpacity()` — define `ColorOpacityExtensions`
+- Use `LayoutBuilder` or `MediaQuery` for responsive UI
+- Always follow Material 3 design guidelines
+- Use `AssetImage` for local images
+- Use `cached_network_image` for remote images with `errorBuilder`
+- Configure `TextField`s with proper capitalization and keyboard type
+- Never use `print()` inside `build()` — use `log()` instead
+- Keep lines under 80 characters
+- Run `flutter pub run build_runner build --delete-conflicting-outputs` after updates
+- Comment clearly on non-obvious logic
+- Use private widget classes instead of `_buildWidget()` functions
+- Use functional, concise Dart with arrow syntax and trailing commas
+- Ensure fast load and interactive UI benchmarks
+- All UIs must adapt to screen size and platform
+- Organize helpers in `/shared/utils`, extensions in `/shared/extensions`, and widgets in `/shared/widgets`
+- Prefer composition over shared logic between screens
+- Use `ConsumerWidget` or `HookConsumerWidget` for UI with state
+
+
+---
+
+Self Improvement:
+
+---
+description: Guidelines for continuously improving Cursor rules based on emerging code patterns and best practices.
+globs: **/*
+alwaysApply: true
+---
+
+- **Rule Improvement Triggers:**
+  - New code patterns not covered by existing rules
+  - Repeated similar implementations across files
+  - Common error patterns that could be prevented
+  - New libraries or tools being used consistently
+  - Emerging best practices in the codebase
+
+- **Analysis Process:**
+  - Compare new code with existing rules
+  - Identify patterns that should be standardized
+  - Look for references to external documentation
+  - Check for consistent error handling patterns
+  - Monitor test patterns and coverage
+
+- **Rule Updates:**
+  - **Add New Rules When:**
+    - A new technology/pattern is used in 3+ files
+    - Common bugs could be prevented by a rule
+    - Code reviews repeatedly mention the same feedback
+    - New security or performance patterns emerge
+
+  - **Modify Existing Rules When:**
+    - Better examples exist in the codebase
+    - Additional edge cases are discovered
+    - Related rules have been updated
+    - Implementation details have changed
+
+- **Example Pattern Recognition:**
+  ```typescript
+  // If you see repeated patterns like:
+  const data = await prisma.user.findMany({
+    select: { id: true, email: true },
+    where: { status: 'ACTIVE' }
+  });
+  
+  // Consider adding to [prisma.mdc](mdc:.cursor/rules/prisma.mdc):
+  // - Standard select fields
+  // - Common where conditions
+  // - Performance optimization patterns
+  ```
+
+- **Rule Quality Checks:**
+  - Rules should be actionable and specific
+  - Examples should come from actual code
+  - References should be up to date
+  - Patterns should be consistently enforced
+
+- **Continuous Improvement:**
+  - Monitor code review comments
+  - Track common development questions
+  - Update rules after major refactors
+  - Add links to relevant documentation
+  - Cross-reference related rules
+
+- **Rule Deprecation:**
+  - Mark outdated patterns as deprecated
+  - Remove rules that no longer apply
+  - Update references to deprecated rules
+  - Document migration paths for old patterns
+
+- **Documentation Updates:**
+  - Keep examples synchronized with code
+  - Update references to external docs
+  - Maintain links between related rules
+  - Document breaking changes
+Follow [rules.mdc](mdc:.cursor/rules.mdc) for proper rule formatting and structure.
+
