@@ -49,6 +49,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final uiState = ref.watch(uIStateProvider);
     final theme = Theme.of(context);
+    
+    // Watch for reset changes and close drawer if needed
+    ref.listen(uIStateProvider, (previous, next) {
+      if (previous?.resetTimestamp != next.resetTimestamp && next.resetTimestamp > 0) {
+        // Reset happened, close drawer if it's open
+        if (scaffoldKey.currentState?.isEndDrawerOpen == true) {
+          Navigator.of(context).pop();
+        }
+      }
+    });
 
     return Scaffold(
       key: scaffoldKey,
@@ -282,7 +292,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                  Text(
-                  'Professional Mobile UI Playground with advanced real-time customization capabilities. Features a floating control panel, natural language commands, comprehensive UI state management, text field transparency controls, and avatar image picker functionality.',
+                  'Professional Mobile UI Playground with advanced real-time customization capabilities. Features smart command filtering, sequential execution, enhanced avatar system, and comprehensive UI state management.',
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.left,
                 ),
@@ -293,7 +303,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                  SizedBox(height: AppTheme.spacingS),
                  Text(
-                  '✅ Natural language command processing\n✅ Real-time UI updates\n✅ Structured instruction system\n✅ Reset functionality\n✅ 42+ supported commands\n✅ Advanced floating control panel',
+                  '✅ Natural language command processing\n✅ Smart command filtering\n✅ Sequential command execution\n✅ Enhanced avatar system (5 shapes)\n✅ Hex color input support\n✅ Real-time UI updates',
                   style: TextStyle(fontSize: 12),
                 ),
                  SizedBox(height: AppTheme.spacingM),
@@ -310,7 +320,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                  _CommandsList(),
                  SizedBox(height: AppTheme.spacingM),
                  Text(
-                  'Total: 50+ supported commands with natural language processing',
+                  'Total: 42 supported commands with smart filtering and sequential execution',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                  SizedBox(height: AppTheme.spacingM),
